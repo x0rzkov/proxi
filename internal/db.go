@@ -33,6 +33,7 @@ import (
 
 var (
 	DB              *sql.DB
+	GORMDB          *gorm.DB
 	DbPath          string
 	connectionLimit int
 )
@@ -42,12 +43,13 @@ type Model struct {
 	ID        uint      `json:"-" gorm:"primary_key"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
-	//DeletedAt *time.Time `json:"-"`
+	// DeletedAt *time.Time `json:"-"`
 }
 
 // Proxy represents a proxy record and is used to create the table for our db.
 type Proxy struct {
-	Model
+	gorm.Model
+	//Model
 	RespTime     *string `json:"response_time"`
 	CheckCount   uint    `json:"check_count" gorm:"default:0"`
 	Country      string  `json:"country" `
@@ -110,7 +112,8 @@ func DbInit() {
 	gormdb.AutoMigrate(&Proxy{})
 	gormdb.Model(&Proxy{}).AddIndex("idx_proxy_compound", "deleted", "last_status", "anonymous", "country")
 	// just need gorm for migration.
-	gormdb.Close()
+	// gormdb.Close()
+	GORMDB = gormdb
 
 	if connectionLimit != 1 {
 		DB.Exec(`

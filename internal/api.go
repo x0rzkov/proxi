@@ -21,10 +21,14 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nicksherron/proxi/docs"
+	"github.com/qor/admin"
+	"github.com/qor/assetfs"
+	"github.com/qor/qor/utils"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -133,6 +137,49 @@ func API() {
 	r.GET("/busy", func(c *gin.Context) {
 		c.String(http.StatusOK, "%v", busy)
 	})
+
+	// qor-admin
+	// Initialize
+	// Initialize AssetFS
+	AssetFS := assetfs.AssetFS().NameSpace("admin")
+
+	// Register custom paths to manually saved views
+	AssetFS.RegisterPath(filepath.Join(utils.AppRoot, "./templates/qor/admin/views"))
+	AssetFS.RegisterPath(filepath.Join(utils.AppRoot, "./templates/qor/media/views"))
+
+	// Initialize Admin
+	Admin := admin.New(&admin.AdminConfig{
+		SiteName: "Proxies Dataset",
+		DB:       GORMDB,
+		AssetFS:  AssetFS,
+	})
+
+	// Allow to use Admin to manage User, Product
+	proxy := Admin.AddResource(&Proxy{})
+
+	proxy.Meta(&admin.Meta{Name: "Country", Valuer: func(record interface{}, context *qor.Context) interface{} {
+		if p, ok := record.(*Proxy); ok {
+			result := bytes.NewBufferString("")
+			tmpl, _ := template.New("").Parse("<img src='/public/flags/{{.image}}.png'></img>")
+			tmpl.Execute(result, map[string]string{"image": p.Country})
+			return template.HTML(result.String())
+		}
+		return ""
+	}})
+
+	// initalize an HTTP request multiplexer
+	mux := http.NewServeMux()
+
+	// Mount admin interface to mux
+	Admin.MountTo("/admin", mux)
+
+	// add basic auth
+	admin := r.Group("/admin", gin.BasicAuth(gin.Accounts{"proxy": "proxies"}))
+	{
+		admin.Any("/*resources", gin.WrapH(mux))
+	}
+
+	r.Static("/public", "./public")
 
 	docs.SwaggerInfo.Host = fmt.Sprintf("http://%v", Addr)
 	swaggerURL := ginSwagger.URL(fmt.Sprintf("http://%v/swagger/doc.json", Addr))
