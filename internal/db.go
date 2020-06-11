@@ -48,8 +48,8 @@ type Model struct {
 
 // Proxy represents a proxy record and is used to create the table for our db.
 type Proxy struct {
-	gorm.Model
-	//Model
+	// gorm.Model
+	Model
 	RespTime     *string `json:"response_time"`
 	CheckCount   uint    `json:"check_count" gorm:"default:0"`
 	Country      string  `json:"country" `

@@ -17,17 +17,21 @@
 package internal
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nicksherron/proxi/docs"
 	"github.com/qor/admin"
 	"github.com/qor/assetfs"
+	"github.com/qor/qor"
 	"github.com/qor/qor/utils"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -154,18 +158,27 @@ func API() {
 		AssetFS:  AssetFS,
 	})
 
+	setupDashboard(GORMDB, Admin)
+
+	Admin.AddMenu(&admin.Menu{Name: "Proxy Management", Priority: 1})
+
 	// Allow to use Admin to manage User, Product
-	proxy := Admin.AddResource(&Proxy{})
+	proxy := Admin.AddResource(&Proxy{}, &admin.Config{Menu: []string{"Proxy Management"}, Priority: -1})
 
 	proxy.Meta(&admin.Meta{Name: "Country", Valuer: func(record interface{}, context *qor.Context) interface{} {
 		if p, ok := record.(*Proxy); ok {
 			result := bytes.NewBufferString("")
-			tmpl, _ := template.New("").Parse("<img src='/public/flags/{{.image}}.png'></img>")
-			tmpl.Execute(result, map[string]string{"image": p.Country})
+			tmpl, _ := template.New("").Parse("<img style=\"max-width:100px\" src='/public/country-flags/svg/{{.image}}.svg'></img>")
+			tmpl.Execute(result, map[string]string{"image": strings.ToLower(p.Country)})
 			return template.HTML(result.String())
 		}
 		return ""
 	}})
+
+	// proxyStats :=
+
+	// proxy.IndexAttrs("Country", "Proxy", "FailCount")
+	// proxy.UseTheme("grid")
 
 	// initalize an HTTP request multiplexer
 	mux := http.NewServeMux()

@@ -34,40 +34,21 @@
     <div class="mdl-grid">
 
       <div class="mdl-cell mdl-cell--6-col">
-        <h4 class="qor-section-title">{{t "Vehicles Indexation"}}</h4>
-        <img src="https://igsave.net/public/assets/images/loading.gif" id="vehicles_report_loader">
-        <canvas id="vehicles_report"></canvas>
+        <h4 class="qor-section-title">{{t "Proxy Indexation"}}</h4>
+        <img src="https://igsave.net/public/assets/images/loading.gif" id="proxies_report_loader">
+        <canvas id="proxies_report"></canvas>
       </div>
 
-      <div class="mdl-cell mdl-cell--6-col">
-        <h4 class="qor-section-title">{{t "Vehicle Images Indexation"}}</h4>
-        <img src="https://igsave.net/public/assets/images/loading.gif" id="vehicle_images_report_loader">
-        <canvas id="vehicle_images_report"></canvas>
-      </div>
     </div>
 
-    <div class="mdl-grid">
-
-      <div class="mdl-cell mdl-cell--6-col">
-        <h4 class="qor-section-title">{{t "Source Counters"}}</h4>
-        <canvas id="sources_report"></canvas>
-      </div>
-
-      <div class="mdl-cell mdl-cell--6-col">
-        <h4 class="qor-section-title">{{t "Source Images Counters"}}</h4>
-      </div>
-    </div>
-
-
-  </div>
 
   <!-- if have table please add qor-section__table className -->
   <div class="qor-section qor-section__table qor-theme-slideout">
     <div class="qor-section__header">
-      <h4 class="qor-section-title">{{t "Latest Vehicles"}}</h4>
+      <h4 class="qor-section-title">{{t "Latest Proxies"}}</h4>
     </div>
     <div class="qor-section__body qor-table-container">
-      {{render_latest_vehicles .}}
+      {{render_latest_proxies .}}
     </div>
   </div>
 

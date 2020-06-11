@@ -325,6 +325,33 @@ func DownloadProxies() Proxies {
 		providerProxies = append(providerProxies, results...)
 		mutex.Unlock()
 	}()
+	go func() {
+		defer wgD.Done()
+		ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
+		defer cancel()
+		results := githubA2u(ctx)
+		mutex.Lock()
+		providerProxies = append(providerProxies, results...)
+		mutex.Unlock()
+	}()
+	go func() {
+		defer wgD.Done()
+		ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
+		defer cancel()
+		results := githubHookzof(ctx)
+		mutex.Lock()
+		providerProxies = append(providerProxies, results...)
+		mutex.Unlock()
+	}()
+	go func() {
+		defer wgD.Done()
+		ctx, cancel := context.WithTimeout(context.Background(), ctxTimeout)
+		defer cancel()
+		results := githubOpsxcq(ctx)
+		mutex.Lock()
+		providerProxies = append(providerProxies, results...)
+		mutex.Unlock()
+	}()
 	wgD.Wait()
 	return providerProxies
 

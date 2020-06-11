@@ -16,6 +16,8 @@ require (
 	github.com/hokaccha/go-prettyjson v0.0.0-20190818114111-108c894c2c0e // indirect
 	github.com/icrowley/fake v0.0.0-20180203215853-4178557ae428
 	github.com/jinzhu/gorm v1.9.12
+	github.com/jinzhu/now v1.0.1
+	github.com/k0kubun/pp v3.0.1+incompatible
 	github.com/lib/pq v1.3.0
 	github.com/mattn/go-isatty v0.0.12
 	github.com/microcosm-cc/bluemonday v1.0.2 // indirect
